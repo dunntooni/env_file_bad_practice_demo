@@ -1,7 +1,24 @@
-import os
-from dotenv import load_dotenv
+# This program illustrates why we need to be careful with user input. In one
+# instance, we see the API_KEY global variable be exposed. When sanitized,
+# it becomes inaccessible.
 
-load_dotenv()
+from string import Template
 
-print(os.getenv('API_KEY'))
-print(os.getenv('PASS'))
+API_KEY = 'This is my cool API key'
+
+
+class Error:
+    def __init__(self):
+        pass
+
+
+if __name__ == '__main__':
+    # User input this string: {error.__init__.__globals__[API_KEY]}
+    userInput = input("Input text: ")
+    err = Error()
+
+    # This code exposes the global variable
+    print(userInput.format(error=err))
+
+    # This sanitized code does not
+    print(Template(userInput).substitute(error=err))
